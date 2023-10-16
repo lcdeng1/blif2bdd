@@ -12,7 +12,7 @@ CXX_OBJS := $(addprefix ./,$(notdir $(CXX_SRCS:.cc=.o)))
 TARGET := blif2bdd
 
 # Library directories and libraries
-REXDD_DIR := /Users/lichuan/Documents/Projects/rexdd1
+REXDD_DIR := /PATH_TO_REDD_LIB/
 LIB_DIRS := -L$(REXDD_DIR)/build-release/src
 INCLUDE_DIRS := -I$(REXDD_DIR)/src
 LIBS := -lRexDD
