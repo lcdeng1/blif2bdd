@@ -340,6 +340,7 @@ int main(int argc, char** argv) {
     bool testlex = false;
     bool testparse = false;
     unsigned ordering = ORDER_WEIGHT_BOT;
+    if (argc == 1) return usage(argv[0]);
     for (int i=1; i<argc; i++) {
         if (0==strcmp("-h", argv[i])) {
             return usage(argv[0]);
