@@ -289,6 +289,7 @@ symbol* parse(lexer &L)
         if (t.matches(token::MODEL)) {
             L.consume(t);
             if (! t.matches(token::IDENT))  expected(token::IDENT, t);
+            L.setModelName(t.getAttr());
             std::cerr << "Processing model " << t.getAttr() << "\n";
             continue;
         }

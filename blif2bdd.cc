@@ -315,6 +315,10 @@ int usage(const char* exe)
     std::cerr << "    -t: The BDD type for building (default: RexBDD)\n";
     typelist();
     std::cerr << "\n";
+    std::cerr << "    -g: Enable garbage collection\n";
+    std::cerr << "\n";
+    std::cerr << "    -f: The histoy results will be writen into file [BDD_name].txt\n";
+    std::cerr << "\n";
     std::cerr << "    -d: Display the BDD forest when done\n";
     std::cerr << "\n";
     std::cerr << "    -oF: Order based on file, first .input at TOP\n";
@@ -336,6 +340,7 @@ int usage(const char* exe)
 int main(int argc, char** argv) {
     char bdd_type = 0;      // default RexBDD: 0
     bool is_gc = false;
+    bool is_history = false;
     bool display = false;
     bool show_card = false;
     bool testlex = false;
@@ -348,6 +353,10 @@ int main(int argc, char** argv) {
         }
         if (0==strcmp("-g", argv[i])) {
             is_gc = true;
+            continue;
+        }
+        if (0==strcmp("-f", argv[i])) {
+            is_history = true;
             continue;
         }
         if (0==strcmp("-d", argv[i])) {
@@ -529,9 +538,21 @@ int main(int argc, char** argv) {
         } // for n
     } // for p
     
-    std::cerr << "Total number of nodes in " << F.S.type_name <<": " << num_nodes << "\n";
-    std::cerr << "Time taken of " << F.S.type_name << ": \t\t" << rtime->get_last_seconds() << " seconds\n";
-
+    if (!is_history) {
+        std::cerr << "Model: " << L.getModelName() << "\n";
+        std::cerr << "Total number of nodes in " << F.S.type_name <<": " << num_nodes << "\n";
+        std::cerr << "Time taken of " << F.S.type_name << ": \t\t" << rtime->get_last_seconds() << " seconds\n";
+    } else {
+        FILE* fout;
+        std::string filename = F.S.type_name;
+        filename += ".txt";
+        fout = fopen(filename.c_str(), "a");
+        fprintf(fout, "Model\t%s\n", L.getModelName().c_str());
+        fprintf(fout, "Nodes#\t%llu\n", num_nodes);
+        fprintf(fout, "Time\t%f\n", rtime->get_last_seconds());
+        fclose(fout);
+    }
+    
 
     rexdd_free_forest(&F);
     return 0;

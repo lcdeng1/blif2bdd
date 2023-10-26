@@ -64,6 +64,7 @@ class lexer {
         int num_inputs; // number of inputs consumed
         int num_id;     // number of identifiers consumed
         char cover;     // 'i': ident tokens; 'c': cover token; 'o': single out token
+        std::string model_name;
     public:
         lexer(std::istream& _fin);
 
@@ -104,6 +105,14 @@ class lexer {
 
         inline const char getCover() const {
             return cover;
+        }
+
+        inline void setModelName(std::string name) {
+            model_name += name;
+        }
+
+        inline const std::string getModelName() const {
+            return model_name;
         }
 
     private:
