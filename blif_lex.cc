@@ -66,6 +66,7 @@ void lexer::scan_token()
                         text.finish();
                         next_tok.tokenID = token::NEWLINE;
                         next_tok.attribute = "\\n";
+                        if (cover == 'o') return;
                         if (cover == 'i' || cover == 'b') cover = 'c';
                         if (num_id == 1) cover = 'o';
                         if (has_backslash) cover = 'b';

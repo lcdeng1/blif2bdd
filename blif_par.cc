@@ -79,6 +79,20 @@ void process_outputs(lexer &L, symbol* &ST)
         // Make sure it's not a duplicate symbol
         symbol* find = move_to_front(ST, t.getAttr());
         if (find) {
+            if (find->type == INPUT) {
+                // which means this input is output
+                expr* E;
+                product* P = new product;
+                sum* S = new sum;
+                E = new term(find);
+                P->push(E);
+                S->push(P);
+                ST = new symbol(t, find);
+                ST->init_output();
+                ST->name += "_OUT";
+                ST->build = S;
+                continue;
+            }
             std::cerr << "Error line " << t.getLine() << ":\n    ";
             find->duplicate_error();
             throw 2;
@@ -168,7 +182,12 @@ expr* process_covers(lexer &L, symbol* &ST, const unsigned num){
         E = parse_product(L, ST, num);
         L.consume(t);
         if (! t.matches(token::SO)) {
-            expected(token::SO, t);
+            if (t.matches(token::NEWLINE)) {
+                L.consume(t);
+                if (!t.matches(token::SO)) expected(token::SO, t);
+            } else {
+                expected(token::SO, t);
+            }
         }
         if (t.getAttr()[0] == 0 || t.getAttr()[1] != 0) {
             std::cerr << "number of digits should equal to 1 for single output\n";
@@ -199,7 +218,6 @@ expr* process_covers(lexer &L, symbol* &ST, const unsigned num){
             expected(token::NEWLINE, t);
         }
     }
-    
     return S;
 }
 
@@ -269,7 +287,7 @@ symbol* parse(lexer &L)
             continue;
         }
         // End of this model
-        if (t.matches(token::ENDMODEL)) break;
+        if (t.matches(token::ENDMODEL) || t.matches(token::END)) break;
 
         // Process inputs variables
         if (t.matches(token::INPUTS)) {

@@ -215,7 +215,6 @@ struct symbol {
             // build->show(std::cerr);
             // std::cerr << "\n";
             dd = build->construct(F);
-            // std::cerr << "Done building BDD for " << name << "\n";
             computed = true;
             // FILE* fout;
             // std::string filename = name + F->S.type_name;

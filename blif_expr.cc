@@ -175,12 +175,14 @@ rexdd_edge_t term::construct(rexdd_forest_t *F) const
         // std::cerr << "Uncomputed symbol in term::construct\n";
         // throw 5;
         // std::cerr << "uncomputed symbol term" << var->name << "\n";
-        var->build_bdd(F);
-    }
-
-    if (is_const) {
-        // this is for the constant input, change it to be a constant edge
-        var->dd = build_constant(F, var->level, (is_complemented()?1:0));
+        if (is_const) {
+            std::cerr << "building a constanr!\n";
+            // this is for the constant input, change it to be a constant edge
+            var->dd = build_constant(F, var->level, (is_complemented()?1:0));
+            var->computed = true;
+        } else {
+            var->build_bdd(F);
+        }
     }
 
     return complement_if_needed(F, var->dd);

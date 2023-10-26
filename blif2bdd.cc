@@ -335,6 +335,7 @@ int usage(const char* exe)
  */
 int main(int argc, char** argv) {
     char bdd_type = 0;      // default RexBDD: 0
+    bool is_gc = false;
     bool display = false;
     bool show_card = false;
     bool testlex = false;
@@ -344,6 +345,10 @@ int main(int argc, char** argv) {
     for (int i=1; i<argc; i++) {
         if (0==strcmp("-h", argv[i])) {
             return usage(argv[0]);
+        }
+        if (0==strcmp("-g", argv[i])) {
+            is_gc = true;
+            continue;
         }
         if (0==strcmp("-d", argv[i])) {
             display = true;
@@ -477,23 +482,29 @@ int main(int argc, char** argv) {
             //     build_gv(fout, &F, p->dd);
             //     fclose(fout);
             // }
-            std::cerr << "Garbage collecting...\n";
-            unmark_forest(&F);
-            // mark inputs
-            for (unsigned i=1; i<=num_vars; i++) {
-                mark_nodes(&F, inputs[i]->dd.target);
-            }
-            // mark computed gates or outputs
-            for (symbol* q=slist; q; q=q->next) {
-                if (q->computed) {
-                    mark_nodes(&F, q->dd.target);
+            if (is_gc) {
+                // std::cerr << "Garbage collecting...\n";
+                unmark_forest(&F);
+                // mark inputs
+                for (unsigned i=1; i<=num_vars; i++) {
+                    mark_nodes(&F, inputs[i]->dd.target);
                 }
+                // mark computed gates or outputs
+                for (symbol* q=slist; q; q=q->next) {
+                    if (q->computed) {
+                        mark_nodes(&F, q->dd.target);
+                    }
+                }
+                //
+                // std::cerr << "sweep UT\n";
+                rexdd_sweep_UT(F.UT);
+                // std::cerr << "sweep CT\n";
+                rexdd_sweep_CT(F.CT, F.M);
+                // std::cerr << "sweep nodeman\n";
+                rexdd_sweep_nodeman(F.M);
+                // std::cerr << "Done GC!\n";
+                // printf("after_GC: ndoe 210 fourth32 is %d\n", rexdd_get_packed_for_handle(F.M, 211)->fourth32);
             }
-            //
-            rexdd_sweep_UT(F.UT);
-            rexdd_sweep_CT(F.CT, F.M);
-            rexdd_sweep_nodeman(F.M);
-            std::cerr << "Done GC!\n";
         }
     }
     rtime->note_time();
