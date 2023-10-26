@@ -505,14 +505,10 @@ int main(int argc, char** argv) {
                     }
                 }
                 //
-                // std::cerr << "sweep UT\n";
                 rexdd_sweep_UT(F.UT);
-                // std::cerr << "sweep CT\n";
                 rexdd_sweep_CT(F.CT, F.M);
-                // std::cerr << "sweep nodeman\n";
                 rexdd_sweep_nodeman(F.M);
                 // std::cerr << "Done GC!\n";
-                // printf("after_GC: ndoe 210 fourth32 is %d\n", rexdd_get_packed_for_handle(F.M, 211)->fourth32);
             }
         }
     }
@@ -551,6 +547,7 @@ int main(int argc, char** argv) {
         fprintf(fout, "Nodes#\t%llu\n", num_nodes);
         fprintf(fout, "Time\t%f\n", rtime->get_last_seconds());
         fclose(fout);
+        std::cerr << "Done!\n";
     }
     
 
