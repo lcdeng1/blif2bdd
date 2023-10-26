@@ -33,7 +33,6 @@ void match(lexer &L, token::type t)
 
 void process_inputs(lexer &L, symbol* &ST)
 {
-    unsigned num_inputs = 0;
     token t;
     for (;;) {
         L.consume(t);
@@ -46,7 +45,6 @@ void process_inputs(lexer &L, symbol* &ST)
         if (! t.matches(token::IDENT)) {
             expected(token::IDENT, t);
         }
-        // std::cerr << "Get input: " << t.getAttr() << "\n";
 
         // Make sure it's not a duplicate symbol
         symbol* find = move_to_front(ST, t.getAttr());
@@ -56,8 +54,9 @@ void process_inputs(lexer &L, symbol* &ST)
         }
 
         // another input variable
+        L.incNumInputs();
         ST = new symbol(t, ST);
-        ST->init_input(++num_inputs);
+        ST->init_input(L.getNumInputs());
     }
 }
 
@@ -167,11 +166,18 @@ expr* process_covers(lexer &L, symbol* &ST, const unsigned num){
     // now ready to parse the cover and set the expression
     for (;;) {
         t = L.peek();
-        if (t.matches(token::NAMES) || t.matches(token::ENDMODEL)) {
+        if (t.matches(token::NAMES) || t.matches(token::ENDMODEL) || t.matches(token::END)) {
             break;
         }
         // it should be cover to build product
         if (! t.matches(token::COVER)) {
+            if (t.matches(token::NEWLINE)) {
+                L.consume(t);
+                continue;
+                // if (!t.matches(token::)) expected(token::SO, t);
+            } else {
+                expected(token::NEWLINE, t);
+            }
             expected(token::COVER, t);
         }
         if (t.getAttr()[num-2] == 0 || t.getAttr()[num-1] != 0) {

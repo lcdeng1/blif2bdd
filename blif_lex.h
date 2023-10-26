@@ -61,6 +61,7 @@ class lexer {
         std::istream& fin;
         token next_tok;
         lexeme text;
+        int num_inputs; // number of inputs consumed
         int num_id;     // number of identifiers consumed
         char cover;     // 'i': ident tokens; 'c': cover token; 'o': single out token
     public:
@@ -87,6 +88,14 @@ class lexer {
 
         inline token::type getID() const {
             return next_tok.getId();
+        }
+
+        inline void incNumInputs() {
+            num_inputs++;
+        }
+
+        inline const int getNumInputs() const {
+            return num_inputs;
         }
 
         inline const int getNum() const {

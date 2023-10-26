@@ -26,6 +26,7 @@ lexer::lexeme::~lexeme()
 lexer::lexer(std::istream& _fin) : fin(_fin), text(MAX_LEXEME)
 {
     next_tok.lineno = 1;
+    num_inputs = 0;
     num_id = 0;
     cover = 0;
     scan_token();
