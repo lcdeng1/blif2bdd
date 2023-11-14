@@ -1,6 +1,7 @@
 # Compiler and compiler flags
 CXX := g++
 CXXFLAGS := -Wall -ggdb -std=c++11
+MACOSFLAG := -mmacosx-version-min=13.6
 
 # Source files
 CXX_SRCS := $(wildcard ./*.cc)
@@ -13,7 +14,7 @@ TARGET := blif2bdd
 
 # Library directories and libraries
 REXDD_DIR := /PATH_TO_REDD_LIB/
-LIB_DIRS := -L$(REXDD_DIR)/build-release/src
+LIB_DIRS := -L$(REXDD_DIR)/build-debug/src
 INCLUDE_DIRS := -I$(REXDD_DIR)/src
 LIBS := -lRexDD
 
@@ -21,10 +22,10 @@ LIBS := -lRexDD
 all: $(TARGET)
 
 $(TARGET): $(CXX_OBJS)
-	$(CXX) $(INCLUDE_DIRS) $(LIBS) $(LIB_DIRS) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(MACOSFLAG) $(LIBS) $(LIB_DIRS) $(CXXFLAGS) $^ -o $@
 
 %.o: %.cc
-	$(CXX) $(INCLUDE_DIRS) $(LIBS) $(LIB_DIRS) -c $(CXXFLAGS) $< 
+	$(CXX) $(INCLUDE_DIRS) -c $(CXXFLAGS) $< 
 # $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
 # 	@mkdir -p $(OBJ_DIR)
 # 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) $(LIB_DIRS) $(LIBS) -c $< -o $@
